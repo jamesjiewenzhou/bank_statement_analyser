@@ -3,7 +3,6 @@ import numpy as np
 from tkinter.filedialog import askopenfilename
 import datetime as dt
 from dateutil.parser import parse, ParserError
-import datefinder
 
 
 def select_file():
@@ -48,10 +47,6 @@ def isolate_dates(dates):
         new_dates.append(parse(date, yearfirst=year_first, dayfirst=day_first).date())
     
     return new_dates
-
-
-def date_correction(date_string):
-    pass
 
 
 def determine_datetime_format(datetime_string):
