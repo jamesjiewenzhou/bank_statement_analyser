@@ -16,13 +16,33 @@ def read_file(file_name):
     return data
 
 
-def isolate_dates(dates):
+def return_keys(data: pd.DataFrame):
+    return list(data.keys())
+
+
+def update_dates(data: pd.DataFrame, keys: list):
+    keys_copy = [key.lower() for key in keys]
+    print(keys_copy)
+    date_indices = []
+    date_substring = "date"
+    for i, key in enumerate(keys_copy):
+        if key.find(date_substring) != -1:
+            date_indices.append(i)
+    
+    print(date_indices)
+    for index in date_indices:
+        new_format_dates = correct_dates(data[keys[index]].copy().to_list())
+        data[keys[index]] = new_format_dates
+    print(data.head())
+        
+
+
+def correct_dates(dates):
     date_formats = []
     day_first = False
     year_first = False
     for date in dates:
         all_formats = determine_datetime_format(date)
-        print(all_formats)
         date_formats.append(all_formats)
     
     for formats in date_formats:
@@ -95,15 +115,11 @@ def determine_datetime_format(datetime_string):
 
 
 def main():
-    # a = select_file()
-    # print(a)
-    # _ = read_file(a)
-    # _ = date_correction("03/11/2023")
-    # print(determine_datetime_format("03/11/2023"))
-    test_dates = ['05/10/2023', '06-01-2022', '12/24/31']
-    updated_dates = isolate_dates(test_dates)
-    print(test_dates)
-    print(updated_dates)
+    a = select_file()
+    print(a)
+    data = read_file(a)
+    keys = return_keys(data)
+    update_dates(data, keys)
 
 
 if __name__ == "__main__":
