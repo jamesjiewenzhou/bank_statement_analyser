@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 import pandas as pd
+import numpy as np
 
 
 def open_file():
@@ -11,12 +12,15 @@ def open_file():
 
 
 def gui_layout(root: tk.Tk, data: pd.DataFrame):
+# TODO: convert into OOP
 # TODO: reorganise bits of code into functions
-# TODO: put in the summation feature
 # TODO: put in a date filter
 # TODO: put in a summation graph
     header_frame = ttk.Frame(root)
     header_frame.pack(side=tk.TOP, fill=tk.BOTH)
+
+    analysis_frame = ttk.Frame(root)
+    analysis_frame.pack(side=tk.BOTTOM, fill=tk.BOTH)
 
     canvas = tk.Canvas(root)
     canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -50,8 +54,24 @@ def gui_layout(root: tk.Tk, data: pd.DataFrame):
         for j, value in enumerate(row):
             key_text = tk.Label(display_frame, text=value, width=20)
             key_text.grid(row=i+1, column=j+1)
+    
+    
+    cost_label = tk.Label(analysis_frame, text="=")
+    cost_label.grid(row=0, column=1)
+
+    calculate_button = tk.Button(analysis_frame, text="Calculate Costs", command=lambda: sum_costs(data, row_selected, cost_label))
+    calculate_button.grid(row=0, column=0)
+
+    resize_window(root, canvas, display_frame)
+    # canvas.update_idletasks()
+    # canvas_width = display_frame.winfo_width()
+    # canvas.configure(width=canvas_width)
+    # root.update_idletasks()
+    # window_width = display_frame.winfo_width() + root.winfo_width() - canvas.winfo_width()
+    # root.geometry(f"{window_width}x300")
 
 
+def resize_window(root: tk.Tk, canvas: tk.Canvas, display_frame: ttk.Frame):
     canvas.update_idletasks()
     canvas_width = display_frame.winfo_width()
     canvas.configure(width=canvas_width)
@@ -60,13 +80,11 @@ def gui_layout(root: tk.Tk, data: pd.DataFrame):
     root.geometry(f"{window_width}x300")
 
 
-# def resize_window(root: tk.Tk(), canvas: tk.Canvas(), display_frame: ttk.Frame()):
-#     canvas.update_idletasks()
-#     canvas_width = display_frame.winfo_width()
-#     canvas.configure(width=canvas_width)
-#     root.update_idletasks()
-#     window_width = display_frame.winfo_width() + root.winfo_width() - canvas.winfo_width()
-#     root.geometry(f"{window_width}x300")
+def sum_costs(data: pd.DataFrame, toggle_button_vars: list[tk.BooleanVar], cost_label: tk.Label):
+    key_indices = [i for i, value in enumerate(toggle_button_vars) if value.get()]
+    selected_df = data.iloc[key_indices]
+    costs = selected_df["Amount"].copy().to_numpy()
+    cost_label.config(text=str(np.sum(costs)))
 
 
 def select_all(toggle_button_vars: list[tk.BooleanVar], select_all_var: tk.BooleanVar):
