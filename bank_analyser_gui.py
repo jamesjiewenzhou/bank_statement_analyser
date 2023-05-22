@@ -11,11 +11,12 @@ def open_file():
 
 
 def gui_layout(root: tk.Tk, data: pd.DataFrame):
-
-# TODO: pin the top row
+# TODO: reorganise bits of code into functions
 # TODO: put in the summation feature
 # TODO: put in a date filter
 # TODO: put in a summation graph
+    header_frame = ttk.Frame(root)
+    header_frame.pack(side=tk.TOP, fill=tk.BOTH)
 
     canvas = tk.Canvas(root)
     canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -34,20 +35,20 @@ def gui_layout(root: tk.Tk, data: pd.DataFrame):
     print(keys)
 
     for i, key in enumerate(keys):
-        key_label = tk.Label(display_frame, text=key, width=20)
+        key_label = tk.Label(header_frame, text=key, width=20)
         key_label.grid(row=0, column=i+1)
     
     row_selected = [tk.BooleanVar() for _ in range(len(data))]
     select_all_var = tk.BooleanVar()
-    select_all_button = tk.Checkbutton(display_frame, variable=select_all_var, command=lambda: select_all(row_selected, select_all_var))
-    select_all_button.grid(row=0, column=0)
+    select_all_button = tk.Checkbutton(header_frame, variable=select_all_var, command=lambda: select_all(row_selected, select_all_var))
+    select_all_button.grid(row=0, column=0, padx="2 0")
     toggle_buttons = []
     for i, row in data.iterrows():
         toggle_button = tk.Checkbutton(display_frame, variable=row_selected[i], command=lambda: single_select(row_selected, select_all_var))
         toggle_button.grid(row=i+1, column=0)
         toggle_buttons.append(toggle_button)
         for j, value in enumerate(row):
-            key_text = tk.Label(display_frame, text=value)
+            key_text = tk.Label(display_frame, text=value, width=20)
             key_text.grid(row=i+1, column=j+1)
 
 
@@ -57,6 +58,15 @@ def gui_layout(root: tk.Tk, data: pd.DataFrame):
     root.update_idletasks()
     window_width = display_frame.winfo_width() + root.winfo_width() - canvas.winfo_width()
     root.geometry(f"{window_width}x300")
+
+
+# def resize_window(root: tk.Tk(), canvas: tk.Canvas(), display_frame: ttk.Frame()):
+#     canvas.update_idletasks()
+#     canvas_width = display_frame.winfo_width()
+#     canvas.configure(width=canvas_width)
+#     root.update_idletasks()
+#     window_width = display_frame.winfo_width() + root.winfo_width() - canvas.winfo_width()
+#     root.geometry(f"{window_width}x300")
 
 
 def select_all(toggle_button_vars: list[tk.BooleanVar], select_all_var: tk.BooleanVar):
